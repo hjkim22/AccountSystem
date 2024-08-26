@@ -54,8 +54,8 @@ class TransactionServiceTest {
     void successUseBalance() {
         //given
         AccountUser user = AccountUser.builder()
-                .id(12L)
                 .name("Pobi").build();
+        user.setId(12L);
         Account account = Account.builder()
                 .accountUser(user)
                 .accountStatus(IN_USE)
@@ -113,8 +113,8 @@ class TransactionServiceTest {
     void deleteAccount_AccountNotFound() {
         //given
         AccountUser user = AccountUser.builder()
-                .id(12L)
                 .name("Pobi").build();
+        user.setId(12L);
         given(accountUserRepository.findById(anyLong()))
                 .willReturn(Optional.of(user));
         given(accountRepository.findByAccountNumber(anyString()))
@@ -131,27 +131,27 @@ class TransactionServiceTest {
     @Test
     @DisplayName("계좌 소유주 다름 - 잔액 사용 실패")
     void deleteAccountFailed_userUnMatch() {
-        //given
+        // given
         AccountUser pobi = AccountUser.builder()
-                .id(12L)
                 .name("Pobi").build();
-        AccountUser kim = AccountUser.builder()
-                .id(13L)
-                .name("kim").build();
+        pobi.setId(12L);
+        AccountUser harry = AccountUser.builder()
+                .name("Harry").build();
+        harry.setId(13L);
         given(accountUserRepository.findById(anyLong()))
                 .willReturn(Optional.of(pobi));
         given(accountRepository.findByAccountNumber(anyString()))
                 .willReturn(Optional.of(Account.builder()
-                        .accountUser(kim)
+                        .accountUser(harry)
                         .balance(0L)
                         .accountNumber("1000000012").build()));
 
-        //when
+        // when
         AccountException exception = assertThrows(AccountException.class,
                 () -> transactionService.useBalance(1L, "1234567890", 1000L));
 
-        //then
-        assertEquals(USER_ACCOUNT_UN_MATCH, exception.getErrorCode());
+        // then
+        assertEquals(ErrorCode.USER_ACCOUNT_UN_MATCH, exception.getErrorCode());
     }
 
     @Test
@@ -159,8 +159,8 @@ class TransactionServiceTest {
     void deleteAccountFailed_alreadyUnRegistered() {
         //given
         AccountUser pobi = AccountUser.builder()
-                .id(12L)
                 .name("Pobi").build();
+        pobi.setId(12L);
         given(accountUserRepository.findById(anyLong()))
                 .willReturn(Optional.of(pobi));
         given(accountRepository.findByAccountNumber(anyString()))
@@ -183,8 +183,8 @@ class TransactionServiceTest {
     void exceedAmount_UseBalance() {
         //given
         AccountUser user = AccountUser.builder()
-                .id(12L)
                 .name("Pobi").build();
+        user.setId(12L);
         Account account = Account.builder()
                 .accountUser(user)
                 .accountStatus(IN_USE)
@@ -209,8 +209,8 @@ class TransactionServiceTest {
     void saveFailedUseTransaction() {
         //given
         AccountUser user = AccountUser.builder()
-                .id(12L)
                 .name("Pobi").build();
+        user.setId(12L);
         Account account = Account.builder()
                 .accountUser(user)
                 .accountStatus(IN_USE)
